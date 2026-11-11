@@ -8,3 +8,4 @@ cloudinary
 passlib
 bcrypt
 python-multipart
+PyJWT
