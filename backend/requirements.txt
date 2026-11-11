@@ -11,3 +11,4 @@ python-multipart
 PyJWT
 fastapi-mail
 sslcommerz-lib
+Pillow
