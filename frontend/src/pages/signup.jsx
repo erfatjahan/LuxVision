@@ -46,7 +46,7 @@ const Signup = () => {
         
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Create Account</h1>
-          <p className="text-muted-foreground text-sm">Join LuxAI and start creating</p>
+          <p className="text-muted-foreground text-sm">Join LuxVision and start creating</p>
         </div>
 
         <form onSubmit={handleSignup} className="space-y-5">

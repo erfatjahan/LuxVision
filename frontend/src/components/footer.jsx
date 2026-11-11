@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles, Mail } from "lucide-react"; 
+import { Mail } from "lucide-react"; 
 
 const Footer = () => {
   return (
@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2 text-xl font-bold text-primary mb-4">
-              <span>LuxAI</span>
+              <span>LuxVision</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4">
               Next-generation AI image enhancement and restoration platform.
@@ -54,7 +54,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-border mt-8 pt-6 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} LuxAI Platform. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} LuxVision Platform. All rights reserved.</p>
         </div>
       </div>
     </footer>

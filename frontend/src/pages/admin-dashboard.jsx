@@ -9,9 +9,8 @@ const AdminDashboard = () => {
   ];
 
   const recentUsers = [
-    { id: 1, name: "Most Erfat Jahan", email: "erfat@luxai.com", plan: "Pro", joined: "Nov 7, 2026" },
-    { id: 2, name: "Diba Dey", email: "diba@example.com", plan: "Free", joined: "Nov 6, 2026" },
-    { id: 3, name: "Tanvir Ahmed", email: "tanvir@example.com", plan: "Pro", joined: "Nov 5, 2026" },
+    { id: 1, name: "Most Erfat Jahan", email: "ab@lux.com", plan: "Pro", joined: "Nov 7, 2026" },
+
   ];
 
   return (

@@ -9,7 +9,7 @@ const Contact = () => {
         
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground">Get in Touch</h1>
-          <p className="text-muted-foreground mt-2">Have questions about LuxAI? We'd love to hear from you.</p>
+          <p className="text-muted-foreground mt-2">Have questions about LuxVision? We'd love to hear from you.</p>
         </div>
 
         <form className="space-y-5">

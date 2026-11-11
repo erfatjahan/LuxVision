@@ -83,7 +83,7 @@ const Dashboard = () => {
                  <p className="text-2xl font-extrabold text-primary">{historyData.length}</p>
                </div>
              </div>
-             <p className="text-sm text-muted-foreground">Images processed using LuxAI Hybrid Engine.</p>
+             <p className="text-sm text-muted-foreground">Images processed using LuxVision Hybrid Engine.</p>
           </div>
         </div>
 
