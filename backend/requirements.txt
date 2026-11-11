@@ -13,3 +13,4 @@ fastapi-mail
 sslcommerz-lib
 Pillow
 torch
+numpy
