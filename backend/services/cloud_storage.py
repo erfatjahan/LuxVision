@@ -1,0 +1,20 @@
+import cloudinary
+import cloudinary.uploader
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Cloudinary Configuration
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
+
+def upload_to_cloudinary(file_bytes: bytes, folder_name: str = "luxvision"):
+    """
+    Image bytes.
+    """
+    response = cloudinary.uploader.upload(file_bytes, folder=folder_name)
+    return response.get("secure_url")
