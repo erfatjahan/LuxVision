@@ -1,8 +1,7 @@
-const API_BASE_URL = "http://localhost:8000"; 
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export async function loginUser(credentials) {
-  const res = await fetch(`${API_BASE_URL}/auth/login`, { 
+  const res = await fetch(`${API_URL}/auth/login`, { 
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
@@ -15,7 +14,7 @@ export async function enhanceImageAPI(file, token) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE_URL}/image/enhance`, {
+  const res = await fetch(`${API_URL}/image/enhance`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`, 
@@ -26,7 +25,7 @@ export async function enhanceImageAPI(file, token) {
   return res.json();
 }
 export async function initPaymentAPI(planData, token) {
-  const res = await fetch(`${API_BASE_URL}/api/payment/init`, {
+  const res = await fetch(`${API_URL}/api/payment/init`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

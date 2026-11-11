@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { UserCircle, Shield, CreditCard, Loader2, Camera } from "lucide-react";
 import { Link } from "react-router-dom";
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const Profile = () => {
   const [profile, setProfile] = useState({ name: "", email: "", credits: 0, avatar_url: "" });
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/api/profile/me", {
+        const res = await fetch(`${API_URL}/api/profile/me`, {
           headers: {
             ...(token ? { "Authorization": `Bearer ${token}` } : {})
           }
@@ -46,7 +46,7 @@ const Profile = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/api/profile/me", {
+      const res = await fetch(`${API_URL}/api/profile/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +88,7 @@ const Profile = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/api/profile/avatar", {
+      const res = await fetch(`${API_URL}/api/profile/avatar`, {
         method: "POST",
         headers: {
           ...(token ? { "Authorization": `Bearer ${token}` } : {})

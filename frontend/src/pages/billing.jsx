@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { CreditCard, ShieldCheck, Lock, Sparkles } from "lucide-react";
-
+import {Lock} from "lucide-react";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const Billing = () => {
   const [selectedPlan, setSelectedPlan] = useState("pro");
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ const Billing = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch("http://localhost:8000/api/profile/me", {
+        const response = await fetch(`${API_URL}/api/profile/me`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -60,7 +60,7 @@ const Billing = () => {
     try {
       const token = localStorage.getItem("token");
       
-      const response = await fetch("http://localhost:8000/api/payment/init", {
+      const response = await fetch(`${API_URL}/api/payment/init`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

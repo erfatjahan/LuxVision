@@ -8,7 +8,7 @@ import {
   RotateCcw,
   AlertCircle,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const USE_MOCK = false;
 const MAX_MB = 5;
 const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
@@ -32,7 +32,7 @@ async function enhanceImage(file) {
 
   const token = localStorage.getItem("token");
 
-  const res = await fetch("http://localhost:8000/api/image/enhance", { 
+  const res = await fetch(`${API_URL}/api/image/enhance`, { 
     method: "POST", 
     headers: {
       ...(token ? { "Authorization": `Bearer ${token}` } : {})

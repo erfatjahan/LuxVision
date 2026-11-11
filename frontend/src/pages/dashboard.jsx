@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Image as ImageIcon, History, Download, Trash2, Wand2, Loader2 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const Dashboard = () => {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const useNavigateHook = useNavigate();
-
+  // const useNavigateHook = useNavigate();
+  const navigate = useNavigate();
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8000/api/image/history", {
+      const response = await fetch(`${API_URL}/api/image/history`, {
         headers: {
           ...(token ? { "Authorization": `Bearer ${token}` } : {})
         }
@@ -28,6 +28,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchHistory();
   }, []);
 
@@ -36,7 +37,7 @@ const Dashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8000/api/image/history/${id}`, {
+      const response = await fetch(`${API_URL}/api/image/history/${id}`, {
         method: "DELETE",
         headers: {
           ...(token ? { "Authorization": `Bearer ${token}` } : {})
@@ -129,7 +130,7 @@ const Dashboard = () => {
                        </a>
 
                        <button 
-                         onClick={() => useNavigateHook("/studio", { state: { imageUrl: item.original_url } })}
+                         onClick={() => navigate("/studio", { state: { imageUrl: item.original_url } })}
                          className="p-2 bg-accent/10 text-accent-foreground hover:bg-accent/20 rounded-lg transition-colors" 
                          title="Enhance Again"
                        >

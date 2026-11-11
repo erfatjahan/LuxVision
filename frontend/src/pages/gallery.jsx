@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { Image as ImageIcon, Download, Trash2, Calendar, Sparkles, Search } from "lucide-react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 const Gallery = () => {
   const [images, setImages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     const fetchGalleryImages = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8000/api/image/history", {
+        const response = await fetch(`${API_URL}/api/image/history`, {
           headers: {
             ...(token ? { "Authorization": `Bearer ${token}` } : {})
           }
@@ -19,15 +20,15 @@ const Gallery = () => {
 
         if (response.ok) {
           const data = await response.json();
-       
-
-const formattedImages = data.map((img) => ({
-  id: img.id,
-  name: img.name || "Enhanced_Image.png",
-  date: img.date || "Recent", 
-  after: img.enhanced_url,   
-  status: "Enhanced",
-}));
+          
+          const formattedImages = data.map((img) => ({
+            id: img.id,
+            name: img.name || "Enhanced_Image.png",
+            date: img.date || "Recent", 
+            after: img.enhanced_url,    
+            status: "Enhanced",
+          }));
+          
           setImages(formattedImages);
         } else {
           console.error("Failed to fetch gallery history");
@@ -43,12 +44,26 @@ const formattedImages = data.map((img) => ({
   }, []);
 
   const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this image?")) return;
+
     try {
       const token = localStorage.getItem("token");
-      
-      setImages(images.filter((img) => img.id !== id));
+
+      const response = await fetch(`${API_URL}/api/image/history/${id}`, {
+        method: "DELETE",
+        headers: {
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        }
+      });
+
+      if (response.ok) {
+        setImages(images.filter((img) => img.id !== id));
+      } else {
+        alert("Failed to delete the image from server.");
+      }
     } catch (error) {
       console.error("Failed to delete image:", error);
+      alert("Could not connect to the server.");
     }
   };
 
@@ -65,7 +80,7 @@ const formattedImages = data.map((img) => ({
             <Sparkles className="h-7 w-7 text-primary" /> My Gallery & History
           </h1>
           <p className="text-muted-foreground mt-1">
-            Browse,download,or manage all your enhanced photos.
+            Browse, download, or manage all your enhanced photos.
           </p>
         </div>
 
@@ -148,7 +163,7 @@ const formattedImages = data.map((img) => ({
           <ImageIcon className="h-16 w-16 text-muted-foreground mb-4 opacity-40" />
           <h3 className="text-xl font-bold text-foreground">No images found</h3>
           <p className="text-muted-foreground text-sm mt-1 max-w-sm">
-            {searchTerm ? "No results match your search term." : "You haven't enhanced any photos yet.Head over to the Studio to start enhancing!"}
+            {searchTerm ? "No results match your search term." : "You haven't enhanced any photos yet. Head over to the Studio to start enhancing!"}
           </p>
         </div>
       )}

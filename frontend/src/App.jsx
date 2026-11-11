@@ -20,7 +20,7 @@ import Billing from "./pages/billing";
 import Gallery from "./pages/gallery";
 import AdminDashboard from "./pages/admin-dashboard";
 import PaymentSuccess from "./pages/PaymentSuccess"; 
-import AboutUs from "./pages/aboutUs";
+import AboutUs from "./pages/aboutus";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 
