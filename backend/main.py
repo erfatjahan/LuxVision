@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from routers import auth, admin, payment, image,profile
+from routers import auth, admin, payment, image, profile
 from model import load_ai_model
 import os
 import uvicorn
+from database import engine, Base
+import models  
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
+Base.metadata.create_all(bind=engine)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Loading AI Model into Memory...")
@@ -20,7 +20,6 @@ async def lifespan(app: FastAPI):
     print("Shutting down...")
 
 app = FastAPI(title="LuxVision SaaS API", lifespan=lifespan)
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,6 +35,11 @@ app.include_router(admin.router)
 app.include_router(payment.router)
 app.include_router(image.router) 
 app.include_router(profile.router)
+
 @app.get("/")
 def home():
     return {"message": "LuxAI Backend is Fully Operational!"}
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
