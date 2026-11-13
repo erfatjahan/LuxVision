@@ -7,6 +7,7 @@ import os
 import uvicorn
 from database import engine, Base
 import models  
+torch.set_num_threads(1)
 
 Base.metadata.create_all(bind=engine)
 @asynccontextmanager

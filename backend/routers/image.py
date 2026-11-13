@@ -27,7 +27,7 @@ async def process_image(
         image_bytes = await file.read()
         input_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         
-        max_size = 800
+        max_size = 512
         if max(input_image.size) > max_size:
             input_image.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
         

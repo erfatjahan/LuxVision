@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from PIL import Image
-
+from PIL import Image, ImageEnhance
+import gc
 
 class DecomNet(nn.Module):
     def __init__(self, channel=64):
@@ -58,7 +58,7 @@ class KinD_Restormer_Hybrid(nn.Module):
         return r_enhanced * i
 
 def load_ai_model(weight_path):
-    """Server chalu holei model memory te load korar jonno"""
+   
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = KinD_Restormer_Hybrid().to(device)
     
@@ -67,7 +67,7 @@ def load_ai_model(weight_path):
     return model, device
 
 def enhance_image(model, device, pil_image):
-    """API"""
+   
     img_np = np.asarray(pil_image).astype(np.float32) / 255.0
     img_t = torch.from_numpy(img_np.transpose(2, 0, 1)).float().unsqueeze(0).to(device)
     
@@ -77,4 +77,17 @@ def enhance_image(model, device, pil_image):
     pred_np = pred.squeeze(0).permute(1, 2, 0).cpu().numpy()
     pred_uint8 = (pred_np * 255.0).round().astype(np.uint8)
     
-    return Image.fromarray(pred_uint8)
+    result_image = Image.fromarray(pred_uint8)
+    
+    sharpness_enhancer = ImageEnhance.Sharpness(result_image)
+    result_image = sharpness_enhancer.enhance(1.4) 
+    
+    contrast_enhancer = ImageEnhance.Contrast(result_image)
+    result_image = contrast_enhancer.enhance(1.15) 
+    
+    color_enhancer = ImageEnhance.Color(result_image)
+    result_image = color_enhancer.enhance(1.1)  
+    
+    gc.collect()
+    
+    return result_image
