@@ -2,6 +2,7 @@ from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 import io
 from PIL import Image
+import gc 
 
 from database import get_db
 import models
@@ -18,13 +19,17 @@ async def process_image(
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-   
+    
     if current_user.credits < 1:
         raise HTTPException(status_code=402, detail="Not enough credits! Please recharge.")
     
     try:
         image_bytes = await file.read()
         input_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        
+        max_size = 800
+        if max(input_image.size) > max_size:
+            input_image.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
         
         original_url = upload_to_cloudinary(image_bytes, folder_name=f"luxai/user_{current_user.id}/original")
         
@@ -51,6 +56,8 @@ async def process_image(
         db.add(new_history)
         db.commit()
         
+        gc.collect()
+        
         return {
             "message": "Image enhanced successfully!",
             "original_image": original_url,
@@ -59,6 +66,7 @@ async def process_image(
         }
         
     except Exception as e:
+        gc.collect()
         raise HTTPException(status_code=500, detail=f"Image processing failed: {str(e)}")
 
 
