@@ -67,7 +67,6 @@ def load_ai_model(weight_path):
     return model, device
 
 def enhance_image(model, device, pil_image):
-   
     img_np = np.asarray(pil_image).astype(np.float32) / 255.0
     img_t = torch.from_numpy(img_np.transpose(2, 0, 1)).float().unsqueeze(0).to(device)
     
@@ -79,15 +78,18 @@ def enhance_image(model, device, pil_image):
     
     result_image = Image.fromarray(pred_uint8)
     
-    sharpness_enhancer = ImageEnhance.Sharpness(result_image)
-    result_image = sharpness_enhancer.enhance(1.4) 
+    brightness_enhancer = ImageEnhance.Brightness(result_image)
+    result_image = brightness_enhancer.enhance(1.1) 
     
     contrast_enhancer = ImageEnhance.Contrast(result_image)
-    result_image = contrast_enhancer.enhance(1.15) 
+    result_image = contrast_enhancer.enhance(1.1)  
+    
+    sharpness_enhancer = ImageEnhance.Sharpness(result_image)
+    result_image = sharpness_enhancer.enhance(1.2) 
     
     color_enhancer = ImageEnhance.Color(result_image)
-    result_image = color_enhancer.enhance(1.1)  
-    
+    result_image = color_enhancer.enhance(1.05)
+  
     gc.collect()
     
     return result_image
