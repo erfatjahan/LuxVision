@@ -18,6 +18,7 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 # --- Pydantic Models ---
 class UserCreate(BaseModel):
+    name:str
     email: str
     password: str
 
