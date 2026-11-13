@@ -3,7 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from routers import auth, admin, payment, image,profile
 from model import load_ai_model
+import os
+import uvicorn
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Loading AI Model into Memory...")
