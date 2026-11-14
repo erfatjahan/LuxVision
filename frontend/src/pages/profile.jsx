@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { UserCircle, Shield, CreditCard, Loader2, Camera } from "lucide-react";
+import { UserCircle, Shield, CreditCard, Loader2, Camera, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 const Profile = () => {
   const [profile, setProfile] = useState({ name: "", email: "", credits: 0, avatar_url: "" });
   const [loading, setLoading] = useState(true);
@@ -113,6 +115,34 @@ const Profile = () => {
       alert("Error uploading avatar image.");
     }
   };
+
+  const handleRemoveAvatar = async () => {
+    if (!window.confirm("Are you sure you want to remove your profile picture?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/profile/avatar`, {
+        method: "DELETE",
+        headers: {
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        }
+      });
+
+      if (res.ok || res.status === 200) {
+        setProfile((prev) => ({ ...prev, avatar_url: "" }));
+        localStorage.removeItem("user_avatar");
+        alert("Profile picture removed successfully!");
+      } else {
+        setProfile((prev) => ({ ...prev, avatar_url: "" }));
+        localStorage.removeItem("user_avatar");
+      }
+    } catch (error) {
+      console.error("Error removing avatar:", error);
+      setProfile((prev) => ({ ...prev, avatar_url: "" }));
+      localStorage.removeItem("user_avatar");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
@@ -149,24 +179,38 @@ const Profile = () => {
         <div className="glass-panel p-6 md:col-span-3">
           {activeTab === "profile" ? (
             <>
-              {/* Avatar Upload Section */}
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
-                <div className="relative h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden group">
-                  {profile.avatar_url ? (
-                    <img src={profile.avatar_url} alt="Profile" className="h-full w-full object-cover" />
-                  ) : (
-                    <UserCircle className="h-12 w-12 text-primary" />
-                  )}
-                  <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                    <Camera className="h-6 w-6 text-white" />
-                    <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
-                  </label>
+              {/* Avatar Upload & Remove Section */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-border">
+                <div className="flex items-center gap-4">
+                  <div className="relative h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden group shrink-0">
+                    {profile.avatar_url ? (
+                      <img src={profile.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+                    ) : (
+                      <UserCircle className="h-12 w-12 text-primary" />
+                    )}
+                    <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                      <Camera className="h-6 w-6 text-white" />
+                      <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+                    </label>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">Profile Picture</h3>
+                    <p className="text-xs text-muted-foreground mb-1">Click the avatar to upload a new image</p>
+                    <p className="text-sm text-muted-foreground">Available Credits: <span className="font-bold text-primary">{profile.credits}</span></p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground">Profile Picture</h3>
-                  <p className="text-xs text-muted-foreground mb-1">Click the avatar to upload a new image</p>
-                  <p className="text-sm text-muted-foreground">Available Credits: <span className="font-bold text-primary">{profile.credits}</span></p>
-                </div>
+
+                {/* Remove Avatar Button */}
+                {profile.avatar_url && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveAvatar}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+                    title="Remove Profile Picture"
+                  >
+                    <Trash2 className="h-4 w-4" /> Remove Photo
+                  </button>
+                )}
               </div>
               
               <form onSubmit={handleSave} className="space-y-4">
@@ -209,11 +253,11 @@ const Profile = () => {
               <div className="space-y-4 max-w-md">
                 <div>
                   <label className="text-sm font-medium text-foreground">Current Password</label>
-                  <input type="password" placeholder="••••••••" className="w-full mt-1 p-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                  <input type="password" placeholder="••••円以上" className="w-full mt-1 p-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground">New Password</label>
-                  <input type="password" placeholder="••••••••" className="w-full mt-1 p-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                  <input type="password" placeholder="••••••••" className="w-full mt-1 p-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground" />
                 </div>
                 <button 
                   onClick={() => alert("Password update feature coming soon!")}
