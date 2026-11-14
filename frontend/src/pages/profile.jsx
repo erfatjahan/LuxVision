@@ -226,7 +226,7 @@ const Profile = () => {
                     />
                  </div>
                  <div>
-                    <label className="text-sm font-medium">Email Address (Editable)</label>
+                    <label className="text-sm font-medium">Email Address</label>
                     <input 
                       type="email" 
                       value={profile.email} 
