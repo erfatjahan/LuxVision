@@ -44,7 +44,7 @@ async def signup(user: UserCreate, background_tasks: BackgroundTasks, db: Sessio
     new_user = User(
         email=user.email,
         password_hash=hash_password(user.password),
-        credits=3 
+        credits=15
     )
     db.add(new_user)
     db.commit()
