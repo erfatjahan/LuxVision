@@ -76,3 +76,12 @@ def upload_avatar(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Avatar upload failed: {str(e)}")
+@router.delete("/avatar")
+async def remove_avatar(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    current_user.avatar_url = None
+    db.commit()
+    
+    return {"message": "Avatar removed successfully!"}
