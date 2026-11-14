@@ -109,3 +109,20 @@ async def delete_history_item(
     db.commit()
     
     return {"message": "History item deleted successfully!"}
+@router.patch("/history/{item_id}/favorite")
+async def toggle_favorite(
+    item_id: int,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    item = db.query(models.ImageHistory).filter(
+        models.ImageHistory.id == item_id,
+        models.ImageHistory.user_id == current_user.id
+    ).first()
+    
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+        
+    item.is_favorite = not item.is_favorite
+    db.commit()
+    return {"message": "Favorite status updated", "is_favorite": item.is_favorite}
