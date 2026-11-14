@@ -8,6 +8,7 @@ import {
   RotateCcw,
   AlertCircle,
 } from "lucide-react";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const USE_MOCK = false;
 const MAX_MB = 5;
@@ -148,11 +149,26 @@ const Studio = () => {
 
   const handleDownload = async () => {
     if (!resultUrl) return;
-    const a = document.createElement("a");
-    a.href = resultUrl;
-    a.download = "enhanced.png";
-    a.target = "_blank";
-    a.click();
+    try {
+      const response = await fetch(resultUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = "enhanced.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      const a = document.createElement("a");
+      a.href = resultUrl;
+      a.download = "enhanced.png";
+      a.target = "_blank";
+      a.click();
+    }
   };
 
   const levelLabel = strength < 34 ? "Low" : strength < 67 ? "Medium" : "High";
@@ -179,7 +195,6 @@ const Studio = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ============ Main Workspace ============ */}
         <div
           className={`lg:col-span-2 glass-panel h-[500px] relative flex items-center justify-center overflow-hidden transition-colors ${
             phase === "idle"
@@ -209,7 +224,7 @@ const Studio = () => {
               </span>
               <h3 className="text-xl font-semibold text-foreground">Drop your photo here</h3>
               <p className="text-sm text-muted-foreground mt-1 mb-6">
-                or click to browse.JPG,PNG,WEBP up to {MAX_MB} MB
+                or click to browse. JPG, PNG, WEBP up to {MAX_MB} MB
               </p>
               <span className="px-6 py-2.5 gradient-primary text-primary-foreground rounded-xl font-semibold">
                 Choose a photo
@@ -294,7 +309,6 @@ const Studio = () => {
           />
         </div>
 
-        {/* ============ Sidebar ============ */}
         <div className="glass-panel lg:self-start flex flex-col gap-4 !p-4">
           {file && (
             <div className="rounded-lg border border-border bg-muted/40 px-3 py-2">
