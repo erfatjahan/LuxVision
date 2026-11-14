@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, LogIn } from "lucide-react";
+import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react"; 
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -22,7 +25,6 @@ const Login = ({ onLogin }) => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.access_token); 
-        
         localStorage.setItem("user_email", email);
 
         if (onLogin) onLogin(); 
@@ -64,7 +66,7 @@ const Login = ({ onLogin }) => {
               <input
                 type="email"
                 required
-                className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-foreground"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -72,7 +74,7 @@ const Login = ({ onLogin }) => {
             </div>
           </div>
 
-          {/* Password Input */}
+          {/* Password Input*/}
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground ml-1">Password</label>
             <div className="relative">
@@ -80,14 +82,24 @@ const Login = ({ onLogin }) => {
                 <Lock className="h-5 w-5 text-muted-foreground" />
               </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
-                className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                className="w-full pl-10 pr-12 py-2.5 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-foreground"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+             
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
+            
             <div className="flex justify-end pt-1">
               <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>
             </div>

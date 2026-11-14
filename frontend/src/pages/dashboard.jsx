@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Image as ImageIcon, History, Download, Trash2, Wand2, Loader2 } from "lucide-react";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 const Dashboard = () => {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const useNavigateHook = useNavigate();
   const navigate = useNavigate();
+
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -28,7 +30,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchHistory();
   }, []);
 
@@ -55,16 +56,35 @@ const Dashboard = () => {
     }
   };
 
+  const handleDownload = async (url, filename) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename || "Enhanced_Image.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      window.open(url, "_blank");
+    }
+  };
+
   return (
-    <div className="p-6 max-w-7xl mx-auto min-h-[90vh] animate-fade-in-up">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full min-h-screen pb-20">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Welcome Back, User!</h1>
-          <p className="text-muted-foreground mt-1">Here is an overview of your AI enhancements.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Welcome Back, User!</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Here is an overview of your AI enhancements.</p>
         </div>
         <Link 
           to="/studio" 
-          className="flex items-center gap-2 px-6 py-2.5 gradient-primary text-primary-foreground rounded-xl font-semibold shadow-glow hover:scale-105 transition-transform duration-300"
+          className="flex items-center gap-2 px-5 py-2.5 gradient-primary text-primary-foreground rounded-xl font-semibold shadow-glow hover:scale-105 transition-transform duration-300 text-sm sm:text-base"
         >
           <Plus className="h-5 w-5" />
           New Enhancement
@@ -73,65 +93,64 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-6">
-          <div className="glass-panel p-6">
+          <div className="glass-panel p-5 sm:p-6">
              <div className="flex items-center gap-4 mb-4">
                <div className="p-3 bg-primary/10 rounded-full">
                   <ImageIcon className="h-6 w-6 text-primary" />
                </div>
                <div>
-                 <h3 className="text-lg font-bold text-foreground">Total Enhanced</h3>
-                 <p className="text-2xl font-extrabold text-primary">{historyData.length}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-foreground">Total Enhanced</h3>
+                  <p className="text-xl sm:text-2xl font-extrabold text-primary">{historyData.length}</p>
                </div>
              </div>
-             <p className="text-sm text-muted-foreground">Images processed using LuxVision Hybrid Engine.</p>
+             <p className="text-xs sm:text-sm text-muted-foreground">Images processed using LuxVision Hybrid Engine.</p>
           </div>
         </div>
 
         <div className="lg:col-span-2 glass-panel p-0 overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-border flex items-center gap-2">
+          <div className="p-4 sm:p-6 border-b border-border flex items-center gap-2">
              <History className="h-5 w-5 text-primary" />
-             <h2 className="text-xl font-bold text-foreground">Recent Enhancements</h2>
+             <h2 className="text-lg sm:text-xl font-bold text-foreground">Recent Enhancements</h2>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="flex-1 overflow-y-auto p-2 sm:p-4">
             {loading ? (
               <div className="h-48 flex items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             ) : historyData.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {historyData.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-4 rounded-xl hover:bg-muted/50 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-lg bg-background border border-border flex items-center justify-center overflow-hidden">
+                  <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 rounded-xl bg-background/50 hover:bg-muted/50 transition-colors gap-3 border border-border/40">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                      <div className="h-12 w-12 shrink-0 rounded-lg bg-background border border-border flex items-center justify-center overflow-hidden">
                          {item.enhanced_url ? (
                            <img src={item.enhanced_url} alt={item.name} className="h-full w-full object-cover" />
                          ) : (
                            <ImageIcon className="h-6 w-6 text-muted-foreground" />
                          )}
                       </div>
-                      <div>
-                        <p className="font-semibold text-foreground truncate max-w-[150px] sm:max-w-xs">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.date} • <span className="text-green-500 font-medium">{item.status}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-foreground text-sm sm:text-base truncate">{item.name}</p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-2">
+                           <span>{item.date}</span>
+                           <span className="text-green-500 font-medium">{item.status}</span>
                         </p>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                       <a 
-                         href={item.enhanced_url} 
-                         target="_blank" 
-                         rel="noopener noreferrer"
-                         className="p-2 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors" 
+                    <div className="flex items-center gap-2 self-end sm:self-auto">
+                       <button 
+                         onClick={() => handleDownload(item.enhanced_url, item.name)}
+                         className="p-2 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors cursor-pointer" 
                          title="Download Image"
                        >
                          <Download className="h-4 w-4" />
-                       </a>
+                       </button>
 
                        <button 
                          onClick={() => navigate("/studio", { state: { imageUrl: item.original_url } })}
-                         className="p-2 bg-accent/10 text-accent-foreground hover:bg-accent/20 rounded-lg transition-colors" 
+                         className="p-2 bg-accent/10 text-accent-foreground hover:bg-accent/20 rounded-lg transition-colors cursor-pointer" 
                          title="Enhance Again"
                        >
                          <Wand2 className="h-4 w-4" />
@@ -139,7 +158,7 @@ const Dashboard = () => {
 
                        <button 
                          onClick={() => handleDelete(item.id)}
-                         className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors" 
+                         className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer" 
                          title="Delete History"
                        >
                          <Trash2 className="h-4 w-4" />
@@ -149,11 +168,11 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <div className="h-64 flex flex-col items-center justify-center text-center p-8">
+              <div className="h-64 flex flex-col items-center justify-center text-center p-6">
                  <ImageIcon className="h-12 w-12 text-muted-foreground mb-4 opacity-50" />
-                 <h3 className="text-lg font-semibold text-foreground">No images yet</h3>
-                 <p className="text-sm text-muted-foreground mt-2 max-w-sm mb-4">
-                   You haven't enhanced any images yet.Head over to the studio to get started!
+                 <h3 className="text-base sm:text-lg font-semibold text-foreground">No images yet</h3>
+                 <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-sm mb-4">
+                   You haven't enhanced any images yet. Head over to the studio to get started!
                  </p>
                  <Link 
                    to="/studio"
@@ -165,7 +184,6 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );
