@@ -10,7 +10,7 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     name = Column(String, nullable=True)        
     avatar_url = Column(String, nullable=True)  
-    credits = Column(Integer, default=3)        
+    credits = Column(Integer, default=15)        
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     role = Column(String, default="user")
 
