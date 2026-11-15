@@ -31,7 +31,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
         {isAuthenticated ? (
           <div className="flex items-center gap-3 sm:gap-6">
             
-            
+            {/* Desktop Navigation Links */}
             <div className="hidden md:flex items-center gap-5">
               <Link 
                 to="/dashboard"
@@ -114,13 +114,6 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === '/studio' ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted/50'}`}
           >
             <Wand2 className="h-5 w-5 text-primary" /> Studio
-          </Link>
-          <Link 
-            to="/profile" 
-            onClick={() => setIsOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === '/profile' ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted/50'}`}
-          >
-            <UserCircle className="h-5 w-5 text-primary" /> Profile Settings
           </Link>
           
           <div className="pt-2 border-t border-border">
