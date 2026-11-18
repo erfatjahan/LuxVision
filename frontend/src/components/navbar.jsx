@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { UserCircle, LogOut, LayoutDashboard, Wand2, Menu, X } from "lucide-react";
+import { UserCircle, LogOut, LayoutDashboard, Wand2, ShieldAlert, Menu, X } from "lucide-react";
 
 const Navbar = ({ isAuthenticated, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false); 
   const location = useLocation();
   const navigate = useNavigate();
 
+  const userRole = localStorage.getItem("user_role"); 
+
   const handleLogoutClick = () => {
     localStorage.removeItem("user_email"); 
     localStorage.removeItem("token");
     localStorage.removeItem("user_avatar");
     localStorage.removeItem("user_name");
+    localStorage.removeItem("user_role");
     if (onLogout) {
       onLogout(); 
     }
@@ -45,6 +48,15 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
               >
                 <Wand2 className="h-4 w-4" /> Studio
               </Link>
+
+              {userRole === "admin" && (
+                <Link 
+                  to="/admin" 
+                  className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${location.pathname === '/admin' ? 'text-primary' : 'text-amber-500 hover:text-amber-600'}`}
+                >
+                  <ShieldAlert className="h-4 w-4" /> Admin Panel
+                </Link>
+              )}
             </div>
 
             {/* Profile & Logout Section */}
@@ -64,7 +76,9 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
                   <p className="text-sm font-bold text-foreground leading-none truncate max-w-[130px]">
                     {localStorage.getItem("user_name") || (localStorage.getItem("user_email") ? localStorage.getItem("user_email").split('@')[0] : "Profile")}
                   </p>
-                  <p className="text-xs text-muted-foreground">Pro Plan</p>
+                  <p className="text-xs text-muted-foreground">
+                    {userRole === "admin" ? "Administrator" : "Pro Plan"}
+                  </p>
                 </div>
               </Link>
          
@@ -115,6 +129,16 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
           >
             <Wand2 className="h-5 w-5 text-primary" /> Studio
           </Link>
+
+          {userRole === "admin" && (
+            <Link 
+              to="/admin"
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === '/admin' ? 'bg-amber-500/10 text-amber-500' : 'text-amber-500 hover:bg-muted/50'}`}
+            >
+              <ShieldAlert className="h-5 w-5 text-amber-500" /> Admin Panel
+            </Link>
+          )}
           
           <div className="pt-2 border-t border-border">
             <button 
