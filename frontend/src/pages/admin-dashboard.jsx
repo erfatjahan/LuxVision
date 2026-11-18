@@ -1,9 +1,95 @@
 import { useState, useEffect } from "react";
-import { Users, Image as ImageIcon, DollarSign, Activity, ShieldAlert, ArrowUpRight } from "lucide-react";
+import { Users, Image as ImageIcon, DollarSign, Activity, ShieldAlert, ArrowUpRight, Trash2, Edit3, X } from "lucide-react";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null); 
+  const [creditAmount, setCreditAmount] = useState(10);
+  const [newRole, setNewRole] = useState("user");
+
+  const API_URL = import.meta.env.VITE_API_URL || "https://luxvision-backend.onrender.com";
+  const token = localStorage.getItem("token");
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleAddCredits = async (userId) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/add-credit/${userId}?amount=${creditAmount}`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message);
+        fetchUsers();
+        setSelectedUser(null);
+      } else {
+        alert(data.detail || "Failed to add credits");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleUpdateRole = async (userId) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/user/${userId}/role`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message);
+        fetchUsers();
+        setSelectedUser(null);
+      } else {
+        alert(data.detail || "Failed to update role");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    try {
+      const res = await fetch(`${API_URL}/api/admin/user/${userId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message);
+        setUsers(users.filter(u => u.id !== userId));
+        setSelectedUser(null);
+      } else {
+        alert(data.detail || "Failed to delete user");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const stats = [
     { title: "Total Users", value: users.length > 0 ? users.length : "1,245", change: "+12% this month", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
@@ -12,36 +98,8 @@ const AdminDashboard = () => {
     { title: "System Status", value: "99.9%", change: "All systems normal", icon: Activity, color: "text-purple-500", bg: "bg-purple-500/10" },
   ];
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const API_URL = import.meta.env.VITE_API_URL || "https://luxvision-backend.onrender.com";
-        
-        const res = await fetch(`${API_URL}/api/admin/users`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-        
-        const data = await res.json();
-        if (res.ok) {
-          setUsers(data);
-        } else {
-          console.error("Failed to fetch users:", data.detail);
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
   return (
-    <div className="p-6 max-w-7xl mx-auto min-h-[90vh] animate-fade-in-up">
+    <div className="p-6 max-w-7xl mx-auto min-h-[90vh] animate-fade-in-up relative">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -49,7 +107,7 @@ const AdminDashboard = () => {
             <ShieldAlert className="h-7 w-7 text-primary" /> Admin Control Center
           </h1>
           <p className="text-muted-foreground mt-1">
-            Monitor platform metrics, user activities, and system performance.
+            Monitor platform metrics, user activities, and manage platform permissions.
           </p>
         </div>
       </div>
@@ -100,14 +158,14 @@ const AdminDashboard = () => {
                     <td className="py-3.5 px-4 text-muted-foreground text-sm">{user.email}</td>
                     <td className="py-3.5 px-4 text-muted-foreground text-sm font-semibold">{user.credits}</td>
                     <td className="py-3.5 px-4">
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${user.role === 'admin' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${user.role === 'admin' || user.role === 'superadmin' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
                         {user.role}
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <button 
-                        onClick={() => alert(`Manage user ID: ${user.id}`)}
-                        className="text-xs text-primary hover:underline font-medium cursor-pointer"
+                        onClick={() => { setSelectedUser(user); setNewRole(user.role); }}
+                        className="text-xs px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-medium transition-colors cursor-pointer"
                       >
                         Manage
                       </button>
@@ -119,6 +177,75 @@ const AdminDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Management Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="glass max-w-md w-full p-6 rounded-2xl border border-border bg-background shadow-2xl relative animate-fade-in-up">
+            <button 
+              onClick={() => setSelectedUser(null)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <h3 className="text-xl font-bold text-foreground mb-1">Manage User</h3>
+            <p className="text-xs text-muted-foreground mb-6">{selectedUser.email}</p>
+
+            {/* Add Credits Section */}
+            <div className="mb-6 space-y-2">
+              <label className="text-sm font-semibold text-foreground">Add Credits</label>
+              <div className="flex gap-2">
+                <input 
+                  type="number" 
+                  value={creditAmount} 
+                  onChange={(e) => setCreditAmount(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-sm"
+                />
+                <button 
+                  onClick={() => handleAddCredits(selectedUser.id)}
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 cursor-pointer whitespace-nowrap"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+
+            {/* Update Role Section */}
+            <div className="mb-6 space-y-2">
+              <label className="text-sm font-semibold text-foreground">Change Role</label>
+              <div className="flex gap-2">
+                <select 
+                  value={newRole} 
+                  onChange={(e) => setNewRole(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-sm"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                  <option value="superadmin">Superadmin</option>
+                </select>
+                <button 
+                  onClick={() => handleUpdateRole(selectedUser.id)}
+                  className="px-4 py-2 bg-amber-500 text-white rounded-xl text-sm font-semibold hover:opacity-90 cursor-pointer whitespace-nowrap"
+                >
+                  Update
+                </button>
+              </div>
+            </div>
+
+            {/* Delete User Section */}
+            <div className="pt-4 border-t border-border flex justify-between items-center">
+              <span className="text-xs text-destructive font-medium">Danger Zone</span>
+              <button 
+                onClick={() => handleDeleteUser(selectedUser.id)}
+                className="flex items-center gap-1.5 px-4 py-2 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+              >
+                <Trash2 className="h-4 w-4" /> Delete User
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
