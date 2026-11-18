@@ -45,3 +45,6 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run("main:app", host="0.0.0.0", port=port)
+@app.get("/api/health")
+def health_check():
+    return {"status": "alive", "message": "LuxVision Backend is running smoothly!"}
