@@ -64,11 +64,11 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     
     access_token = create_access_token(data={"sub": str(db_user.id)})
     
-  return {
+    return {
         "access_token": access_token, 
         "token_type": "bearer", 
         "email": db_user.email,
         "name": getattr(db_user, "name", "User"),
-        "credits": db_user.credits,
-        "role": getattr(db_user, "role", "user")  
+        "role": getattr(db_user, "role", "user"),
+        "credits": db_user.credits
     }
