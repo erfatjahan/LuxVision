@@ -1,17 +1,44 @@
+import { useState, useEffect } from "react";
 import { Users, Image as ImageIcon, DollarSign, Activity, ShieldAlert, ArrowUpRight } from "lucide-react";
 
 const AdminDashboard = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const stats = [
-    { title: "Total Users", value: "1,245", change: "+12% this month", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { title: "Total Users", value: users.length > 0 ? users.length : "1,245", change: "+12% this month", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
     { title: "Processed Images", value: "8,432", change: "+24% this week", icon: ImageIcon, color: "text-primary", bg: "bg-primary/10" },
     { title: "Total Revenue", value: "$3,420", change: "+18% this month", icon: DollarSign, color: "text-green-500", bg: "bg-green-500/10" },
     { title: "System Status", value: "99.9%", change: "All systems normal", icon: Activity, color: "text-purple-500", bg: "bg-purple-500/10" },
   ];
 
-  const recentUsers = [
-    { id: 1, name: "Most Erfat Jahan", email: "ab@lux.com", plan: "Pro", joined: "Nov 7, 2026" },
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const API_URL = import.meta.env.VITE_API_URL || "https://luxvision-backend.onrender.com";
+        
+        const res = await fetch(`${API_URL}/api/admin/users`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        
+        const data = await res.json();
+        if (res.ok) {
+          setUsers(data);
+        } else {
+          console.error("Failed to fetch users:", data.detail);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  ];
+    fetchUsers();
+  }, []);
 
   return (
     <div className="p-6 max-w-7xl mx-auto min-h-[90vh] animate-fade-in-up">
@@ -22,7 +49,7 @@ const AdminDashboard = () => {
             <ShieldAlert className="h-7 w-7 text-primary" /> Admin Control Center
           </h1>
           <p className="text-muted-foreground mt-1">
-            Monitor platform metrics,user activities,and system performance.
+            Monitor platform metrics, user activities, and system performance.
           </p>
         </div>
       </div>
@@ -50,37 +77,47 @@ const AdminDashboard = () => {
 
       {/* Recent Users Table */}
       <div className="glass-panel p-6">
-        <h3 className="text-xl font-bold text-foreground mb-4">Recent Users</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border text-xs text-muted-foreground uppercase">
-                <th className="py-3 px-4">Name</th>
-                <th className="py-3 px-4">Email</th>
-                <th className="py-3 px-4">Plan</th>
-                <th className="py-3 px-4">Joined Date</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {recentUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-muted/50 transition-colors">
-                  <td className="py-3.5 px-4 font-semibold text-foreground">{user.name}</td>
-                  <td className="py-3.5 px-4 text-muted-foreground text-sm">{user.email}</td>
-                  <td className="py-3.5 px-4">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${user.plan === 'Pro' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                      {user.plan}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-muted-foreground text-sm">{user.joined}</td>
-                  <td className="py-3.5 px-4 text-right">
-                    <button className="text-xs text-primary hover:underline font-medium">Manage</button>
-                  </td>
+        <h3 className="text-xl font-bold text-foreground mb-4">Platform Users ({users.length})</h3>
+        
+        {loading ? (
+          <p className="text-muted-foreground text-sm py-4">Loading users from database...</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border text-xs text-muted-foreground uppercase">
+                  <th className="py-3 px-4">ID</th>
+                  <th className="py-3 px-4">Email</th>
+                  <th className="py-3 px-4">Credits</th>
+                  <th className="py-3 px-4">Role</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {users.map((user) => (
+                  <tr key={user.id} className="hover:bg-muted/50 transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-foreground">#{user.id}</td>
+                    <td className="py-3.5 px-4 text-muted-foreground text-sm">{user.email}</td>
+                    <td className="py-3.5 px-4 text-muted-foreground text-sm font-semibold">{user.credits}</td>
+                    <td className="py-3.5 px-4">
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${user.role === 'admin' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <button 
+                        onClick={() => alert(`Manage user ID: ${user.id}`)}
+                        className="text-xs text-primary hover:underline font-medium cursor-pointer"
+                      >
+                        Manage
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
