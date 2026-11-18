@@ -51,7 +51,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
 
               {userRole === "admin" && (
                 <Link 
-                  to="/admin" 
+                  to="/admin-dashboard" 
                   className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${location.pathname === '/admin' ? 'text-primary' : 'text-amber-500 hover:text-amber-600'}`}
                 >
                   Admin Panel
@@ -133,7 +133,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
 
           {userRole === "admin" && (
             <Link 
-              to="/admin"
+              to="/admin-dashboard"
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === '/admin' ? 'bg-amber-500/10 text-amber-500' : 'text-amber-500 hover:bg-muted/50'}`}
             >
