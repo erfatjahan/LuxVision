@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { UserCircle, LogOut, LayoutDashboard, Wand2, ShieldAlert, Menu, X } from "lucide-react";
+import { UserCircle, LogOut, LayoutDashboard, Wand2, Menu, X } from "lucide-react";
 
 const Navbar = ({ isAuthenticated, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false); 
@@ -54,7 +54,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
                   to="/admin" 
                   className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${location.pathname === '/admin' ? 'text-primary' : 'text-amber-500 hover:text-amber-600'}`}
                 >
-                  <ShieldAlert className="h-4 w-4" /> Admin Panel
+                  Admin Panel
                 </Link>
               )}
             </div>
@@ -113,6 +113,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
 
       </div>
 
+      {/* Mobile Dropdown Menu */}
       {isAuthenticated && isOpen && (
         <div className="md:hidden glass max-w-7xl mx-auto mt-2 px-4 py-4 rounded-2xl space-y-2 border border-border animate-fade-in-up shadow-xl bg-background/95 backdrop-blur-md">
           <Link 
@@ -136,7 +137,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === '/admin' ? 'bg-amber-500/10 text-amber-500' : 'text-amber-500 hover:bg-muted/50'}`}
             >
-              <ShieldAlert className="h-5 w-5 text-amber-500" /> Admin Panel
+              Admin Panel
             </Link>
           )}
           
