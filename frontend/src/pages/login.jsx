@@ -26,6 +26,7 @@ const Login = ({ onLogin }) => {
         const data = await response.json();
         localStorage.setItem("token", data.access_token); 
         localStorage.setItem("user_email", email);
+        localStorage.setItem("user_role", data.role);
 
         if (onLogin) onLogin(); 
         navigate("/"); 
