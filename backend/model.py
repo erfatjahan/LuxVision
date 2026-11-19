@@ -79,16 +79,16 @@ def enhance_image(model, device, pil_image):
     result_image = Image.fromarray(pred_uint8)
     
     brightness_enhancer = ImageEnhance.Brightness(result_image)
-    result_image = brightness_enhancer.enhance(1.1) 
+    result_image = brightness_enhancer.enhance(0.95) 
     
     contrast_enhancer = ImageEnhance.Contrast(result_image)
-    result_image = contrast_enhancer.enhance(1.1)  
+    result_image = contrast_enhancer.enhance(1.05)  
     
     sharpness_enhancer = ImageEnhance.Sharpness(result_image)
-    result_image = sharpness_enhancer.enhance(1.2) 
+    result_image = sharpness_enhancer.enhance(1.1) 
     
     color_enhancer = ImageEnhance.Color(result_image)
-    result_image = color_enhancer.enhance(1.05)
+    result_image = color_enhancer.enhance(1.03)
   
     gc.collect()
     
