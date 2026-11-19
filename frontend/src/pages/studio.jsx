@@ -55,7 +55,7 @@ const Studio = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [resultUrl, setResultUrl] = useState(null);
   const [phase, setPhase] = useState("idle");
-  const [strength, setStrength] = useState(100);
+  const [strength, setStrength] = useState(30);
   const [split, setSplit] = useState(50);
   const [stepIdx, setStepIdx] = useState(0);
   const [error, setError] = useState("");
