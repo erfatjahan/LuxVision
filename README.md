@@ -28,9 +28,9 @@ and 10 to other plan values.
 6. Studio displays the original and enhanced images in a draggable before/after comparison. History and profile screens use the protected API to retrieve or manage the user's saved data.
 7. For credit purchases, the frontend requests a payment session from SSLCommerz. The gateway calls the backend payment callback after the transaction.
 
-| Studio Input (`before.jpg`) | Enhanced Comparison (`after.jpg`) | Billing & Checkout (`billing.png`) |
+| Studio Input (`before.png`) | Enhanced Comparison (`after.png`) | Billing & Checkout (`billing.png`) |
 | --- | --- | --- |
-| ![Studio Before Enhancement](screenshots/before.jpg) | ![Studio Before and After Comparison](screenshots/after.jpg) | ![Billing and Subscription Checkout](screenshots/billing.png) |
+| ![Studio Before Enhancement](frontend/screenshots/before.png) | ![Studio Before and After Comparison](frontend/screenshots/after.png) | ![Billing and Subscription Checkout](frontend/screenshots/billing.png) |
   ```
 
 User Studio ─────────┐
