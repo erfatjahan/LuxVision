@@ -20,14 +20,17 @@ and 10 to other plan values.
 -  **Image history and profile assets:** Save original/enhanced Cloudinary URLs and history records in PostgreSQL;manage history favorites and profile avatars.
 ## How It Works
 
-1. A visitor creates an account or signs in from the React app.The API returns a JWT access token,which the app keeps in browser local storage.
-2. The signed-in user uploads an image in Studio.The browser sends the file as multipart form data with the bearer token.
-3. FastAPI verifies the user and available credits.It converts the image to RGB and resizes it for inference so its longest side is at most 512 pixels.
-4. The loaded PyTorch model runs on CUDA when available,otherwise on CPU.The enhanced result is saved as PNG.
-5. The backend uploads the original and enhanced images to Cloudinary,stores their URLs in PostgreSQL history,deducts one credit,and returns both URLs and the remaining balance.
-6. Studio displays the original and enhanced images in a draggable before/after comparison.History and profile screens use the protected API to retrieve or manage the user's saved data.
-7. For credit purchases,the frontend requests a payment session from SSLCommerz.The gateway calls the backend payment callback after the transaction.
+1. A visitor creates an account or signs in from the React app. The API returns a JWT access token, which the app keeps in browser local storage.
+2. The signed-in user uploads an image in Studio. The browser sends the file as multipart form data with the bearer token.
+3. FastAPI verifies the user and available credits. It converts the image to RGB and resizes it for inference so its longest side is at most 512 pixels.
+4. The loaded PyTorch model runs on CUDA when available, otherwise on CPU. The enhanced result is saved as PNG.
+5. The backend uploads the original and enhanced images to Cloudinary, stores their URLs in PostgreSQL history, deducts one credit, and returns both URLs and the remaining balance.
+6. Studio displays the original and enhanced images in a draggable before/after comparison. History and profile screens use the protected API to retrieve or manage the user's saved data.
+7. For credit purchases, the frontend requests a payment session from SSLCommerz. The gateway calls the backend payment callback after the transaction.
 
+| Studio Input (`before.jpg`) | Enhanced Comparison (`after.jpg`) | Billing & Checkout (`billing.png`) |
+| --- | --- | --- |
+| ![Studio Before Enhancement](screenshots/before.jpg) | ![Studio Before and After Comparison](screenshots/after.jpg) | ![Billing and Subscription Checkout](screenshots/billing.png) |
   ```
 
 User Studio ─────────┐
